@@ -1,0 +1,49 @@
+﻿0 HEAD
+1 SOUR MySoftware
+2 VERS 1.0
+3 NAME MySoftware
+0 @I1@ INDI
+1 NAME John /Doe/
+2 GIVN John
+2 SURN Doe
+1 SEX M
+1 BIRT
+2 DATE 1990-06-15
+2 PLAC Anytown, USA
+1 DEAT
+2 DATE 2020-01-01
+2 PLAC Anotherplace, USA
+0 @I2@ INDI
+1 NAME Jane /Smith/
+2 GIVN Jane
+2 SURN Smith
+1 SEX F
+1 BIRT
+2 DATE 1988-04-25
+2 PLAC Sometown, USA
+1 DEAT
+2 DATE 2010-12-25
+2 PLAC Yetanotherplace, USA
+0 @I3@ INDI
+1 NAME William /Johnson/
+2 GIVN William
+2 SURN Johnson
+1 SEX M
+1 BIRT
+2 DATE 1975-12-10
+2 PLAC Othercity, USA
+1 DEAT
+2 DATE 2002-09-18
+2 PLAC Anothercity, USA
+0 @F1@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 MARR
+2 DATE 2010-08-30
+2 PLAC TheirPlace, USA
+0 @F2@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 MARR
+2 DATE 2012-05-16
+2 PLAC NewCity, USA
