@@ -2,7 +2,7 @@ import tkinter
 import ttkbootstrap as tb
 import tkintermapview
 from helpers import open_file
-
+from offline_loading import OfflineLoader
 
 root = tb.Window(themename="superhero")
 root.title("Map My Ancestry Visualizer")
@@ -20,6 +20,20 @@ file_menu.add_command(label="Exit", command=root.quit)
 menu_bar.add_cascade(label="File", menu=file_menu)
 root.config(menu=menu_bar)
 
+offline_loader = OfflineLoader(path="tiles.db", tile_server="https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22) 
+
+# Define coordinates to cover the entire world
+top_left_coords = (85, -180)
+bottom_right_coords = (-85, 180)
+starting_zoom = 1
+ending_zoom = 5
+
+
+
+# Save tiles for offline use within the specified area and zoom levels
+offline_loader.save_offline_tiles(top_left_coords, bottom_right_coords, starting_zoom, ending_zoom)
+
+
 # create map widget
 map_widget = tkintermapview.TkinterMapView(root, width=400, height=400, corner_radius=0)
 map_widget.pack(fill="both", expand=True)
@@ -28,7 +42,7 @@ map_widget.pack(fill="both", expand=True)
 map_widget.set_tile_server("https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22) 
 
 # set current widget position and zoom
-map_widget.set_address("Libya")
+map_widget.set_address("Earth")
 map_widget.set_zoom(1)
 
 root.mainloop()
