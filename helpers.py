@@ -85,23 +85,21 @@ def open_file():
 
 def get_year(date):
 
-    formats = [
-        "%Y-%m-%d", "%Y-%m", "%d-%m-%Y", "%m-%Y", "%d %b %Y", "%b %d %Y", "%b %Y", "%Y",
-        "%Y/%m/%d", "%Y/%m", "%d/%m/%Y", "%m/%Y", "%d %b %Y", "%b %d %Y", "%b %Y", "%m/%d/%Y"
+    # extract years
+    date_formats = [
+        r"\b\d{4}\b"  # Matches a 4-digit year
     ]
 
+    # Remove common annotations from the date string
+    date = re.sub(r"\b(?:abt|about|circa|around|est)\.?\b", "", date, flags=re.IGNORECASE)
 
-    for date_format in formats:
-        try:
-            date_object = datetime.strptime(date, date_format)
-            return date_object.year
-        except ValueError:
-            pass
-
-    if "about" in date or "around" in date or "abt" in date:
-        match = re.search(r'\d{4}', date)
+    for date_format in date_formats:
+        match = re.search(date_format, date)
         if match:
-            return int(match.group())
+            year = int(match.group())
+            if year <= datetime.now().year:  # Checking if the year is not in the future
+                return year
+
 
     return None # Return 0 if the date format is not recognized - individual with year 0 will be filtered out as they will be considered deceased
 
@@ -116,7 +114,6 @@ def get_year(date):
 def filter_individuals(slider_year, individuals):
     filtered_individuals = []
     unmapped_individuals = []
-    current_year = datetime.now().year  # Get the current year
     threshold_age = 110  # Set a threshold age to consider someone deceased
 
     for person in individuals:
@@ -147,56 +144,65 @@ def filter_individuals(slider_year, individuals):
 
 #       **** Handle Cases for Individuals to be Filtered ****
 
-        # Case 1: Lifespan is within the slider year
-        if birth_year and birth_year <= slider_year:
-                
-            # Check for most recent residential information
-            if most_recent_residence is not None:
-                person['residences'] = [most_recent_residence]
-                
-            # No residential info, use birth year and birth place instead
-            elif most_recent_residence is None and birth_year is not None:
-                person['residences'] = [(birth_year, person['birth_place'])] 
+        # Case 1: Lifespan is within the slider year (individual is alive or died after slider year)
+        if birth_year and death_year and (birth_year is not None and death_year is not None):
             
+            if birth_year <= slider_year and death_year >= slider_year:
+                
+                # Check for most recent residential information
+                if most_recent_residence is not None:
+                    person['residences'] = [most_recent_residence]
+                    
+                # No residential info, use birth year and birth place instead
+                elif most_recent_residence is None and birth_year is not None:
+                    person['residences'] = [(birth_year, person['birth_place'])] 
+                
             filtered_individuals.append(person)
 
         # Case 2: Birth year is found but death year is not found
         elif birth_year is not None and death_year is None:
+
+            # If the person could plausibly be alive at the slider year based on threshold age
+            if birth_year + threshold_age >= slider_year:
                 
-            # Check for most recent residential information
-            if most_recent_residence is not None:
-                person['residences'] = [most_recent_residence]
-            
-            # No residential info, use birth year and birth place instead
-            else:
-                person['residences'] = [(birth_year, person['birth_place'])] 
-            
+                # Check for most recent residential information
+                if most_recent_residence is not None:
+                    person['residences'] = [most_recent_residence]
+                
+                # No residential info, use birth year and birth place instead
+                else:
+                    person['residences'] = [(birth_year, person['birth_place'])] 
+                
             filtered_individuals.append(person)
 
         # Case 3: Birth year not found but death year is found
         elif birth_year is None and death_year is not None:
+
+            # If the person could plausibly be alive at the slider year based on threshold age
+            if death_year - threshold_age <= slider_year:
             
-            # Check for most recent residential information
-            if most_recent_residence is not None:
-                person['residences'] = [most_recent_residence]
-            
-            # No residential info, use birth year and birth place instead
-            else:
-                person['residences'] = [(birth_year, person['birth_place'])] 
+                # Check for most recent residential information
+                if most_recent_residence is not None:
+                    person['residences'] = [most_recent_residence]
+                
+                # No residential info, use birth year and birth place instead
+                else:
+                    person['residences'] = [(birth_year, person['birth_place'])] 
             
             filtered_individuals.append(person)
         
         # Case 4: No birth or death information found (option to show individuals in GUI later)
-        elif birth_year is None and death_year is None:
+        else:
+            if birth_year is None and death_year is None:
             
-            # Check for most recent residential information
-            if most_recent_residence is not None:
-                person['residences'] = [most_recent_residence]
-            
-            else:
-                person['residences'] = [(None, 'No residence found')]
-            
-            unmapped_individuals.append(person)
+                # Check for most recent residential information
+                if most_recent_residence is not None:
+                    person['residences'] = [most_recent_residence]
+                    filtered_individuals.append(person)
+                
+                else: # Nothing to go off of, unmap them
+                    person['residences'] = [(None, 'No residence found')]
+                    unmapped_individuals.append(person)
                 
     return filtered_individuals, unmapped_individuals
 
