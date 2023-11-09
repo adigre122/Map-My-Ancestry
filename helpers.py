@@ -11,8 +11,8 @@ from gedcom.parser import Parser
 
 
 def open_file():
-    # file_path = filedialog.askopenfilename(filetypes=[("GEDCOM Files", "*.ged")]) # for GUI
-    file_path = '.ged'
+    file_path = filedialog.askopenfilename(filetypes=[("GEDCOM Files", "*.ged")]) # for GUI
+    # file_path = '.ged'
     
     # Initialize the parser
     gedcom_parser = Parser()
@@ -208,46 +208,59 @@ def filter_individuals(slider_year, individuals):
 
 
 # ***** TEST *****  Filter individuals data from GEDCOM based on slider year
-start_time = time.time()
-individuals = open_file()
+# start_time = time.time()
+# individuals = open_file()
 
-# Replace value with desired slider year for testing
-slider_year = 2015
+# # Replace value with desired slider year for testing
+# slider_year = 2015
 
-filtered_data, unmapped_data = filter_individuals(slider_year, individuals)
+# filtered_data, unmapped_data = filter_individuals(slider_year, individuals)
 
-print(filtered_data)
+# print(filtered_data)
 
-# Write filtered data to a file
-with open('filtered_data.txt', 'w') as file:
-    file.write("### Filtered Individuals ###\n")
-    for person in filtered_data:
-        file.write(f"Name: {person['name']}\n")
-        file.write(f"Birth Date: {person['birth_date']}\n")
-        file.write(f"Death Date: {person['death_date']}\n")
-        file.write("Residences:\n")
+# # Write filtered data to a file
+# with open('filtered_data.txt', 'w') as file:
+#     file.write("### Filtered Individuals ###\n")
+#     for person in filtered_data:
+#         file.write(f"Name: {person['name']}\n")
+#         file.write(f"Birth Date: {person['birth_date']}\n")
+#         file.write(f"Death Date: {person['death_date']}\n")
+#         file.write("Residences:\n")
+#         for residence in person['residences']:
+#             file.write(f"   Year: {residence[0]}\n")
+#             file.write(f"   Location: {residence[1]}\n")
+#         file.write("-----------------------\n")
+
+#     file.write("### Unmapped Individuals ###\n")
+#     for person in unmapped_data:
+#         file.write(f"Name: {person['name']}\n")
+#         file.write(f"Birth Date: {person['birth_date']}\n")
+#         file.write(f"Death Date: {person['death_date']}\n")
+#         file.write("Residences:\n")
+#         for residence in person['residences']:
+#             file.write(f"   Year: {residence[0]}\n")
+#             file.write(f"   Location: {residence[1]}\n")
+#         file.write("-----------------------\n")
+
+# end_time = time.time()
+# execution_time = end_time - start_time
+# print(f"Execution time: {execution_time} seconds")
+
+
+
+def get_location(filtered_individuals):
+    markers = []
+    for person in filtered_individuals:
+        # Get each individual's name
+        name = ' '.join(person['name'])  # Combine first and last name into one string
+
+        # individual's residence location - text should be name
         for residence in person['residences']:
-            file.write(f"   Year: {residence[0]}\n")
-            file.write(f"   Location: {residence[1]}\n")
-        file.write("-----------------------\n")
+            year, location = residence  # Unpack the residence tuple
+            if year and location != "Place unknown":
+                markers.append({'location': location, 'text': name})
 
-    file.write("### Unmapped Individuals ###\n")
-    for person in unmapped_data:
-        file.write(f"Name: {person['name']}\n")
-        file.write(f"Birth Date: {person['birth_date']}\n")
-        file.write(f"Death Date: {person['death_date']}\n")
-        file.write("Residences:\n")
-        for residence in person['residences']:
-            file.write(f"   Year: {residence[0]}\n")
-            file.write(f"   Location: {residence[1]}\n")
-        file.write("-----------------------\n")
-
-end_time = time.time()
-execution_time = end_time - start_time
-print(f"Execution time: {execution_time} seconds")
-
-
-
+    return markers
 
 
 

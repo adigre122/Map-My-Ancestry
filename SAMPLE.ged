@@ -1,49 +1,186 @@
 ﻿0 HEAD
-1 SOUR MySoftware
+1 SOUR MyGenealogyApp
 2 VERS 1.0
-3 NAME MySoftware
+1 GEDC
+2 VERS 5.5.1
+1 CHAR UTF-8
+
 0 @I1@ INDI
 1 NAME John /Doe/
-2 GIVN John
-2 SURN Doe
-1 SEX M
-1 BIRT
-2 DATE 1990-06-15
-2 PLAC Anytown, USA
-1 DEAT
-2 DATE 2020-01-01
-2 PLAC Anotherplace, USA
+1 RESI
+2 DATE 1930
+2 PLAC San Francisco, California, United States
+1 RESI
+2 DATE 1950
+2 PLAC Paris, France
+
 0 @I2@ INDI
-1 NAME Jane /Smith/
-2 GIVN Jane
-2 SURN Smith
-1 SEX F
-1 BIRT
-2 DATE 1988-04-25
-2 PLAC Sometown, USA
-1 DEAT
-2 DATE 2010-12-25
-2 PLAC Yetanotherplace, USA
+1 NAME Alice /Smith/
+1 RESI
+2 DATE 1945
+2 PLAC London, United Kingdom
+1 RESI
+2 DATE 1960
+2 PLAC Tokyo, Japan
+
 0 @I3@ INDI
-1 NAME William /Johnson/
-2 GIVN William
-2 SURN Johnson
-1 SEX M
-1 BIRT
-2 DATE 1975-12-10
-2 PLAC Othercity, USA
-1 DEAT
-2 DATE 2002-09-18
-2 PLAC Anothercity, USA
-0 @F1@ FAM
-1 HUSB @I1@
-1 WIFE @I2@
-1 MARR
-2 DATE 2010-08-30
-2 PLAC TheirPlace, USA
-0 @F2@ FAM
-1 HUSB @I1@
-1 WIFE @I2@
-1 MARR
-2 DATE 2012-05-16
-2 PLAC NewCity, USA
+1 NAME Michael /Johnson/
+1 RESI
+2 DATE 1955
+2 PLAC Sydney, Australia
+1 RESI
+2 DATE 1970
+2 PLAC Rome, Italy
+
+0 @I4@ INDI
+1 NAME Emma /Garcia/
+1 RESI
+2 DATE 1965
+2 PLAC Rio de Janeiro, Brazil
+1 RESI
+2 DATE 1980
+2 PLAC Cape Town, South Africa
+
+0 @I5@ INDI
+1 NAME David /Chen/
+1 RESI
+2 DATE 1975
+2 PLAC Beijing, China
+1 RESI
+2 DATE 1990
+2 PLAC Moscow, Russia
+
+0 @I6@ INDI
+1 NAME Sophia /Kim/
+1 RESI
+2 DATE 1980
+2 PLAC Seoul, South Korea
+1 RESI
+2 DATE 2000
+2 PLAC Buenos Aires, Argentina
+
+0 @I7@ INDI
+1 NAME Olivia /Nguyen/
+1 RESI
+2 DATE 1990
+2 PLAC Hanoi, Vietnam
+1 RESI
+2 DATE 2010
+2 PLAC Cairo, Egypt
+
+0 @I8@ INDI
+1 NAME Alexander /Martinez/
+1 RESI
+2 DATE 2000
+2 PLAC Mexico City, Mexico
+1 RESI
+2 DATE 2020
+2 PLAC Berlin, Germany
+
+0 @I9@ INDI
+1 NAME Isabella /Lopez/
+1 RESI
+2 DATE 2010
+2 PLAC Madrid, Spain
+1 RESI
+2 DATE 2021
+2 PLAC Toronto, Canada
+
+0 @I10@ INDI
+1 NAME William /Ng/
+1 RESI
+2 DATE 2020
+2 PLAC Singapore
+1 RESI
+2 DATE 2022
+2 PLAC Helsinki, Finland
+
+0 @I11@ INDI
+1 NAME Mia /Wang/
+1 RESI
+2 DATE 2030
+2 PLAC Mumbai, India
+1 RESI
+2 DATE 2040
+2 PLAC Istanbul, Turkey
+
+0 @I12@ INDI
+1 NAME Ethan /Gomez/
+1 RESI
+2 DATE 2040
+2 PLAC Buenos Aires, Argentina
+1 RESI
+2 DATE 2050
+2 PLAC Kyoto, Japan
+
+0 @I13@ INDI
+1 NAME Harper /Kumar/
+1 RESI
+2 DATE 2050
+2 PLAC New York City, United States
+1 RESI
+2 DATE 2060
+2 PLAC Paris, France
+
+0 @I14@ INDI
+1 NAME Evelyn /Hernandez/
+1 RESI
+2 DATE 2060
+2 PLAC Rome, Italy
+1 RESI
+2 DATE 2070
+2 PLAC Rio de Janeiro, Brazil
+
+0 @I15@ INDI
+1 NAME Oliver /Ali/
+1 RESI
+2 DATE 2070
+2 PLAC Tokyo, Japan
+1 RESI
+2 DATE 2080
+2 PLAC Beijing, China
+
+0 @I16@ INDI
+1 NAME Amelia /Le/
+1 RESI
+2 DATE 2080
+2 PLAC Moscow, Russia
+1 RESI
+2 DATE 2090
+2 PLAC Seoul, South Korea
+
+0 @I17@ INDI
+1 NAME Ethan /Gomez/
+1 RESI
+2 DATE 2090
+2 PLAC Berlin, Germany
+1 RESI
+2 DATE 2100
+2 PLAC Mexico City, Mexico
+
+0 @I18@ INDI
+1 NAME William /Ng/
+1 RESI
+2 DATE 2100
+2 PLAC Madrid, Spain
+1 RESI
+2 DATE 2110
+2 PLAC Singapore
+
+0 @I19@ INDI
+1 NAME Mia /Wang/
+1 RESI
+2 DATE 2110
+2 PLAC Mumbai, India
+1 RESI
+2 DATE 2120
+2 PLAC Buenos Aires, Argentina
+
+0 @I20@ INDI
+1 NAME Evelyn /Hernandez/
+1 RESI
+2 DATE 2120
+2 PLAC New York City, United States
+1 RESI
+2 DATE 2130
+2 PLAC Rome, Italy

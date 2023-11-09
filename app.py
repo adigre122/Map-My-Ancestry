@@ -1,8 +1,31 @@
+from datetime import datetime
+import time
 import tkinter
 import ttkbootstrap as tb
 import tkintermapview
-from helpers import open_file
-from offline_loading import OfflineLoader
+from helpers import open_file, filter_individuals, get_location
+
+def open_selected_file():
+    global individuals_data
+    individuals_data = open_file()  # Load data from the selected file
+    
+    if individuals_data:
+        add_markers(map_widget, individuals_data)  # Display markers
+
+def add_markers(map_widget, individuals):
+    markers = get_location(individuals)
+    for marker in markers:
+        location = tkintermapview.convert_address_to_coordinates(marker['location'])
+        if location is not None:
+            text = marker['text']
+            lat, long = location  # Extract latitude and longitude from the tuple
+            map_widget.set_marker(lat, long, text=text)
+        else:
+            print(f"Failed to get location for marker: {marker}")
+
+# handles slider_year
+def on_slider_change(value):
+    filter_individuals(value) 
 
 root = tb.Window(themename="superhero")
 root.title("Map My Ancestry Visualizer")
@@ -14,32 +37,22 @@ label.pack(pady=50)
 # Create a menu bar
 menu_bar = tb.Menu(root)
 file_menu = tb.Menu(menu_bar, tearoff=0)
-file_menu.add_command(label="Open", command=open_file)
+file_menu.add_command(label="Open", command=open_selected_file)
 file_menu.add_separator()
 file_menu.add_command(label="Exit", command=root.quit)
 menu_bar.add_cascade(label="File", menu=file_menu)
 root.config(menu=menu_bar)
 
-offline_loader = OfflineLoader(path="tiles.db", tile_server="https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22) 
-
-# Define coordinates to cover the entire world
-top_left_coords = (85, -180)
-bottom_right_coords = (-85, 180)
-starting_zoom = 1
-ending_zoom = 5
-
-
-
-# Save tiles for offline use within the specified area and zoom levels
-offline_loader.save_offline_tiles(top_left_coords, bottom_right_coords, starting_zoom, ending_zoom)
-
+# Create a slider for filtering data
+slider = tkinter.Scale(root, from_=1300, to=datetime.now().year, orient='horizontal', command=on_slider_change)
+slider.pack()
 
 # create map widget
 map_widget = tkintermapview.TkinterMapView(root, width=400, height=400, corner_radius=0)
 map_widget.pack(fill="both", expand=True)
 
 # Set map to Google Satellite view
-map_widget.set_tile_server("https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22) 
+map_widget.set_tile_server("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png", max_zoom=22) 
 
 # set current widget position and zoom
 map_widget.set_address("Earth")
