@@ -45,7 +45,9 @@ def on_year_entry_change(entry):
     try:
         year_value = int(year_entry.get())
         global individuals_data, map_widget
-        if year_value > datetime.now().year:
+        if year_value is None:
+            print("Year value is None. Please enter a valid year.")
+        elif year_value > datetime.now().year:
             print("Invalid year. Please enter a valid year.")
         else:
             filtered_data, unmapped_data = filter_individuals(year_value, individuals_data)

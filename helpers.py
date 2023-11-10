@@ -121,14 +121,12 @@ def filter_individuals(slider_year, individuals):
         death_year = get_year(person['death_date']) if person['death_date'] != "Date unknown" else None
         residences = person['residences']
 
-        print(f"Processing: {person['name']}, Birth Year: {birth_year}, Death Year: {death_year}")
+        # print(f"Processing: {person['name']}, Birth Year: {birth_year}, Death Year: {death_year}")
 
-        
-        
         # Remove residences that are None
         residences = [residence for residence in residences if residence[1] != "Place unknown"]
 
-        most_recent_residence = max([res for res in residences if res[0] <= slider_year], key=lambda x: x[0], default=None)
+        most_recent_residence = max([res for res in residences if res[0] is not None and res[0] <= slider_year], key=lambda x: x[0], default=None)
         
         # Handle when there is no most recent residence
         if most_recent_residence is not None:
@@ -156,8 +154,19 @@ def filter_individuals(slider_year, individuals):
                 continue
         
         # Check the age threshold for individuals without birth information
-        if birth_year is None and death_year is None and death_year - threshold_age < slider_year:
+        if birth_year is None and death_year is not None and death_year - threshold_age < slider_year:
             continue
+
+        # Filter out individuals who has most recent residence after slider year
+        if most_recent_residence is not None and most_recent_residence[0] > slider_year:
+            continue
+
+        # Filter out individuals who are likely deceased after living somewhere for threshold age
+        if birth_year is None and death_year is None and most_recent_residence is not None:
+            if most_recent_residence[0] + threshold_age < slider_year:
+                continue
+
+
 
 
 #       **** Handle Individuals to be Filtered ****
