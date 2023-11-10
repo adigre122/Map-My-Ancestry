@@ -120,8 +120,26 @@ def filter_individuals(slider_year, individuals):
         birth_year = get_year(person['birth_date'])
         death_year = get_year(person['death_date']) if person['death_date'] != "Date unknown" else None
         residences = person['residences']
+
+        print(f"Processing: {person['name']}, Birth Year: {birth_year}, Death Year: {death_year}")
+
+        
+        
+        # Remove residences that are None
+        residences = [residence for residence in residences if residence[1] != "Place unknown"]
+
         most_recent_residence = max([res for res in residences if res[0] <= slider_year], key=lambda x: x[0], default=None)
-        # print(f"Birth Year: {birth_year}, Death Year: {death_year}, Slider Year: {slider_year}")  # Debug statement
+        
+        # Handle when there is no most recent residence
+        if most_recent_residence is not None:
+            year, location = most_recent_residence
+            person['residences'] = [(year, location)]
+        else:
+            if birth_year is not None and person['birth_place']:
+                person['residences'] = [(birth_year, person['birth_place'])]
+            else:
+                person['residences'] = [(None, 'No residence found')]
+
         
         # Filter out if all information is unknown or missing
         if birth_year is None and death_year is None and most_recent_residence is None:
@@ -129,79 +147,22 @@ def filter_individuals(slider_year, individuals):
             continue
 
         # Filter out if deceased
-        if death_year and death_year <= slider_year:
+        if death_year is not None and death_year <= slider_year:
             continue
 
-        # Filter out individuals without death information who couldn't be alive based on threshold age
-        if birth_year and not death_year:
+        # Filter out individuals without birth information who couldn't be alive based on threshold age
+        if birth_year is not None and death_year is None:
             if birth_year + threshold_age < slider_year:
                 continue
         
         # Check the age threshold for individuals without birth information
-        if not birth_year and death_year and death_year - threshold_age < slider_year:
+        if birth_year is None and death_year is None and death_year - threshold_age < slider_year:
             continue
 
 
-#       **** Handle Cases for Individuals to be Filtered ****
-
-        # Case 1: Lifespan is within the slider year (individual is alive or died after slider year)
-        if birth_year is not None and death_year is not None and birth_year <= slider_year and death_year >= slider_year:
-            
-            # Check for most recent residential information
-            if most_recent_residence is not None:
-                person['residences'] = [most_recent_residence]
-                
-            # No residential info, use birth year and birth place instead
-            elif most_recent_residence is None and birth_year is not None:
-                person['residences'] = [(birth_year, person['birth_place'])] 
-            
+#       **** Handle Individuals to be Filtered ****
+        if birth_year is not None and birth_year <= slider_year:
             filtered_individuals.append(person)
-
-
-        # Case 2: Birth year is found but death year is not found
-        elif birth_year is not None and death_year is None:
-
-            # If the person could plausibly be alive at the slider year based on threshold age
-            if birth_year + threshold_age >= slider_year:
-                
-                # Check for most recent residential information
-                if most_recent_residence is not None:
-                    person['residences'] = [most_recent_residence]
-                
-                # No residential info, use birth year and birth place instead
-                else:
-                    person['residences'] = [(birth_year, person['birth_place'])] 
-                
-            filtered_individuals.append(person)
-
-        # Case 3: Birth year not found but death year is found
-        elif birth_year is None and death_year is not None:
-
-            # If the person could plausibly be alive at the slider year based on threshold age
-            if death_year - threshold_age <= slider_year:
-            
-                # Check for most recent residential information
-                if most_recent_residence is not None:
-                    person['residences'] = [most_recent_residence]
-                
-                # No residential info, use birth year and birth place instead
-                else:
-                    person['residences'] = [(birth_year, person['birth_place'])] 
-            
-            filtered_individuals.append(person)
-        
-        # Case 4: No birth or death information found (option to show individuals in GUI later)
-        else:
-            if birth_year is None and death_year is None:
-            
-                # Check for most recent residential information
-                if most_recent_residence is not None:
-                    person['residences'] = [most_recent_residence]
-                    filtered_individuals.append(person)
-                
-                else: # Nothing to go off of, unmap them
-                    person['residences'] = [(None, 'No residence found')]
-                    unmapped_individuals.append(person)
                 
     return filtered_individuals, unmapped_individuals
 
@@ -211,7 +172,7 @@ def filter_individuals(slider_year, individuals):
 # individuals = open_file()
 
 # # Replace value with desired slider year for testing
-# entry_year = 2015
+# entry_year = 2000
 
 # filtered_data, unmapped_data = filter_individuals(entry_year, individuals)
 
@@ -249,7 +210,12 @@ def filter_individuals(slider_year, individuals):
 
 def get_location(filtered_individuals):
     markers = []
-    for person in filtered_individuals:
+    for person_data in filtered_individuals:
+        if not person_data:
+            continue
+
+        person = person_data  # Each person_data is already a dictionary
+
         try:
             name = ' '.join(person.get('name', ('', '')))  # Combine first and last name into one string
         except Exception as e:
@@ -257,7 +223,7 @@ def get_location(filtered_individuals):
             print(f"Person data causing the issue: {person}")
             continue  # Skip the current person if an error occurs
 
-        # individual's residence location - text should be name
+        # Individual's residence location - text should be name
         for residence in person.get('residences', []):
             year, location = residence  # Unpack the residence tuple
             if year and location != "Place unknown":
@@ -266,12 +232,13 @@ def get_location(filtered_individuals):
     return markers
 
 
+
 # ***** TEST *****  get location data from GEDCOM based on entry year
 # start_time = time.time()
 # individuals_data = open_file()
 
 # # Replace value with desired slider year for testing
-# entry_year = 2023
+# entry_year = 2022
 
 # # Filter individuals based on the entry year
 # filtered_data, unmapped_data = filter_individuals(entry_year, individuals_data)

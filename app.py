@@ -16,7 +16,7 @@ def open_selected_file():
         # Clear existing markers before adding new ones
         clear_markers()
 
-        # By default, show all ancesters living now (current year)
+        # By default, show all ancesters living now (current year - 2023)
         marker_current_year = filter_individuals(datetime.now().year, individuals_data) 
         add_markers(map_widget, marker_current_year)  # Display markers
 
