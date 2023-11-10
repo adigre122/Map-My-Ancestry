@@ -11,8 +11,8 @@ from gedcom.parser import Parser
 
 
 def open_file():
-    # file_path = filedialog.askopenfilename(filetypes=[("GEDCOM Files", "*.ged")]) # for GUI
-    file_path = 'SAMPLE.ged'
+    file_path = filedialog.askopenfilename(filetypes=[("GEDCOM Files", "*.ged")]) # for GUI
+    # file_path = 'SAMPLE.ged'
     
     # Initialize the parser
     gedcom_parser = Parser()
@@ -210,26 +210,20 @@ def filter_individuals(slider_year, individuals):
 
 def get_location(filtered_individuals):
     markers = []
+
     for person_data in filtered_individuals:
-        if not person_data:
-            continue
+        if isinstance(person_data, dict):
+            name = ' '.join(person_data.get('name', ('', '')))
 
-        person = person_data  # Each person_data is already a dictionary
-
-        try:
-            name = ' '.join(person.get('name', ('', '')))  # Combine first and last name into one string
-        except Exception as e:
-            print(f"Error getting name: {e}")
-            print(f"Person data causing the issue: {person}")
-            continue  # Skip the current person if an error occurs
-
-        # Individual's residence location - text should be name
-        for residence in person.get('residences', []):
-            year, location = residence  # Unpack the residence tuple
-            if year and location != "Place unknown":
-                markers.append({'location': location, 'text': name})
+            residences = person_data.get('residences', [])
+            for residence in residences:
+                year, location = residence
+                if year and location != "Place unknown":
+                    markers.append({'location': location, 'year': year, 'text': name})
 
     return markers
+
+
 
 
 
@@ -238,7 +232,7 @@ def get_location(filtered_individuals):
 # individuals_data = open_file()
 
 # # Replace value with desired slider year for testing
-# entry_year = 2022
+# entry_year = 2002
 
 # # Filter individuals based on the entry year
 # filtered_data, unmapped_data = filter_individuals(entry_year, individuals_data)
@@ -251,6 +245,7 @@ def get_location(filtered_individuals):
 # for marker in markers:
 #     print()
 #     print(f"Location: {marker['location']}")
+#     print(f"Location Year: {marker['year']}")
 #     print(f"Text: {marker['text']}")
 #     print()
 #     print("-----------------------")

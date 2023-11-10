@@ -23,9 +23,7 @@ def open_selected_file():
 def add_markers(map_widget, individuals):
     global existing_markers
     markers = get_location(individuals)
-    
-    # Clear existing markers before adding new ones
-    clear_markers()
+
     for marker in markers:
         location = tkintermapview.convert_address_to_coordinates(marker['location'])
         if location is not None:
@@ -36,13 +34,14 @@ def add_markers(map_widget, individuals):
         else:
             print(f"Failed to get location for marker: {marker}")
 
+
 def clear_markers():
     global existing_markers
     map_widget.delete_all_marker()
     existing_markers = []
 
 # handles text box for year input
-def on_year_entry_change(event):
+def on_year_entry_change(entry):
     try:
         year_value = int(year_entry.get())
         global individuals_data, map_widget
@@ -50,10 +49,13 @@ def on_year_entry_change(event):
             print("Invalid year. Please enter a valid year.")
         else:
             filtered_data, unmapped_data = filter_individuals(year_value, individuals_data)
+            print("Filtered Data:", filtered_data)  # for debugging
+            
             clear_markers() # clear existing markers before adding new ones
             add_markers(map_widget, filtered_data)
-    except ValueError:
-        print("Invalid year format. Please enter a valid year.")
+            print("Markers added successfully") # for debugging
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 root = tb.Window(themename="superhero")
 root.title("Map My Ancestry Visualizer")
