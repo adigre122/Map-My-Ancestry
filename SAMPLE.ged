@@ -7,180 +7,207 @@
 
 0 @I1@ INDI
 1 NAME John /Doe/
-1 RESI
-2 DATE 1930
+1 BIRT
+2 DATE 1965-05-15
+2 PLAC San Francisco, California, United States
+1 DEAT
+2 DATE 2022-09-10
 2 PLAC San Francisco, California, United States
 1 RESI
-2 DATE 1950
-2 PLAC Paris, France
+2 DATE 1980
+2 PLAC Los Angeles, California, United States
+1 RESI
+2 DATE 2000
+2 PLAC New York City, United States
+1 RESI
+2 DATE 2015
+2 PLAC London, United Kingdom
 
 0 @I2@ INDI
 1 NAME Alice /Smith/
-1 RESI
-2 DATE 1945
+1 BIRT
+2 DATE 1970-08-25
 2 PLAC London, United Kingdom
 1 RESI
-2 DATE 1960
-2 PLAC Tokyo, Japan
+2 DATE 1995
+2 PLAC Paris, France
 
 0 @I3@ INDI
 1 NAME Michael /Johnson/
-1 RESI
-2 DATE 1955
+1 BIRT
+2 DATE 1960-11-12
 2 PLAC Sydney, Australia
 1 RESI
-2 DATE 1970
+2 DATE 1985
+2 PLAC Melbourne, Australia
+1 RESI
+2 DATE 2000
 2 PLAC Rome, Italy
 
 0 @I4@ INDI
 1 NAME Emma /Garcia/
-1 RESI
-2 DATE 1965
+1 BIRT
+2 DATE 1950-02-18
+2 PLAC Rio de Janeiro, Brazil
+1 DEAT
+2 DATE 2010-04-05
 2 PLAC Rio de Janeiro, Brazil
 1 RESI
-2 DATE 1980
-2 PLAC Cape Town, South Africa
+2 DATE 1970
+2 PLAC Sao Paulo, Brazil
 
 0 @I5@ INDI
 1 NAME David /Chen/
-1 RESI
-2 DATE 1975
+1 BIRT
+2 DATE 1950-07-05
 2 PLAC Beijing, China
-1 RESI
-2 DATE 1990
-2 PLAC Moscow, Russia
+1 DEAT
+2 DATE 2021-06-20
+2 PLAC Beijing, China
 
 0 @I6@ INDI
 1 NAME Sophia /Kim/
-1 RESI
-2 DATE 1980
+1 BIRT
+2 DATE 1955-12-30
 2 PLAC Seoul, South Korea
 1 RESI
-2 DATE 2000
-2 PLAC Buenos Aires, Argentina
+2 DATE 1975
+2 PLAC Busan, South Korea
+1 RESI
+2 DATE 1990
+2 PLAC Incheon, South Korea
 
 0 @I7@ INDI
 1 NAME Olivia /Nguyen/
-1 RESI
-2 DATE 1990
+1 BIRT
+2 DATE 1960-04-10
+2 PLAC Hanoi, Vietnam
+1 DEAT
+2 DATE 2023-05-15
 2 PLAC Hanoi, Vietnam
 1 RESI
-2 DATE 2010
-2 PLAC Cairo, Egypt
+2 DATE 1980
+2 PLAC Ho Chi Minh City, Vietnam
+1 RESI
+2 DATE 2000
+2 PLAC Da Nang, Vietnam
 
 0 @I8@ INDI
 1 NAME Alexander /Martinez/
-1 RESI
-2 DATE 2000
+1 BIRT
+2 DATE 1970-09-22
 2 PLAC Mexico City, Mexico
 1 RESI
+2 DATE 1990
+2 PLAC Guadalajara, Mexico
+1 RESI
+2 DATE 2010
+2 PLAC Monterrey, Mexico
+1 RESI
 2 DATE 2020
-2 PLAC Berlin, Germany
+2 PLAC Cancun, Mexico
 
 0 @I9@ INDI
 1 NAME Isabella /Lopez/
-1 RESI
-2 DATE 2010
+1 BIRT
+2 DATE 1980-11-15
 2 PLAC Madrid, Spain
 1 RESI
-2 DATE 2021
-2 PLAC Toronto, Canada
+2 DATE 2000
+2 PLAC Barcelona, Spain
+1 RESI
+2 DATE 2020
+2 PLAC Valencia, Spain
 
 0 @I10@ INDI
 1 NAME William /Ng/
-1 RESI
-2 DATE 2020
+1 BIRT
+2 DATE 1990-06-08
 2 PLAC Singapore
 1 RESI
+2 DATE 2010
+2 PLAC Kuala Lumpur, Malaysia
+1 RESI
+2 DATE 2020
+2 PLAC Jakarta, Indonesia
+1 RESI
 2 DATE 2022
-2 PLAC Helsinki, Finland
+2 PLAC Bangkok, Thailand
 
 0 @I11@ INDI
 1 NAME Mia /Wang/
-1 RESI
-2 DATE 2030
+1 BIRT
+2 DATE 1980-01-25
 2 PLAC Mumbai, India
-1 RESI
-2 DATE 2040
-2 PLAC Istanbul, Turkey
 
 0 @I12@ INDI
 1 NAME Ethan /Gomez/
-1 RESI
-2 DATE 2040
+1 BIRT
+2 DATE 1985-08-12
 2 PLAC Buenos Aires, Argentina
 1 RESI
-2 DATE 2050
-2 PLAC Kyoto, Japan
+2 DATE 1990
+2 PLAC Cordoba, Argentina
+1 RESI
+2 DATE 2000
+2 PLAC Mendoza, Argentina
+1 RESI
+2 DATE 2010
+2 PLAC Rosario, Argentina
 
 0 @I13@ INDI
 1 NAME Harper /Kumar/
-1 RESI
-2 DATE 2050
+1 BIRT
+2 DATE 1995-03-28
 2 PLAC New York City, United States
 1 RESI
-2 DATE 2060
-2 PLAC Paris, France
+2 DATE 2015
+2 PLAC Los Angeles, California, United States
+1 RESI
+2 DATE 2020
+2 PLAC Chicago, Illinois, United States
 
 0 @I14@ INDI
 1 NAME Evelyn /Hernandez/
-1 RESI
-2 DATE 2060
+1 BIRT
+2 DATE 2000-09-20
 2 PLAC Rome, Italy
-1 RESI
-2 DATE 2070
-2 PLAC Rio de Janeiro, Brazil
+1 DEAT
+2 DATE 2023-07-12
+2 PLAC Rome, Italy
 
 0 @I15@ INDI
 1 NAME Oliver /Ali/
-1 RESI
-2 DATE 2070
+1 BIRT
+2 DATE 2010-11-10
 2 PLAC Tokyo, Japan
-1 RESI
-2 DATE 2080
-2 PLAC Beijing, China
 
 0 @I16@ INDI
 1 NAME Amelia /Le/
-1 RESI
-2 DATE 2080
+1 BIRT
+2 DATE 2015-11-10
 2 PLAC Moscow, Russia
-1 RESI
-2 DATE 2090
-2 PLAC Seoul, South Korea
 
 0 @I17@ INDI
-1 NAME Ethan /Gomez/
-1 RESI
-2 DATE 2090
+1 NAME Lucas /Gomez/
+1 BIRT
+2 DATE 2019-11-10
 2 PLAC Berlin, Germany
-1 RESI
-2 DATE 2100
-2 PLAC Mexico City, Mexico
 
 0 @I18@ INDI
-1 NAME William /Ng/
-1 RESI
-2 DATE 2100
+1 NAME Emma /Ng/
+1 BIRT
+2 DATE 2020-11-10
 2 PLAC Madrid, Spain
-1 RESI
-2 DATE 2110
-2 PLAC Singapore
 
 0 @I19@ INDI
-1 NAME Mia /Wang/
-1 RESI
-2 DATE 2110
+1 NAME Mia /Li/
+1 BIRT
+2 DATE 2022-11-10
 2 PLAC Mumbai, India
-1 RESI
-2 DATE 2120
-2 PLAC Buenos Aires, Argentina
 
 0 @I20@ INDI
-1 NAME Evelyn /Hernandez/
-1 RESI
-2 DATE 2120
+1 NAME Daniel /Hernandez/
+1 BIRT
+2 DATE 2023-11-10
 2 PLAC New York City, United States
-1 RESI
-2 DATE 2130
-2 PLAC Rome, Italy

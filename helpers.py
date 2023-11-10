@@ -12,7 +12,7 @@ from gedcom.parser import Parser
 
 def open_file():
     # file_path = filedialog.askopenfilename(filetypes=[("GEDCOM Files", "*.ged")]) # for GUI
-    file_path = '.ged'
+    file_path = 'SAMPLE.ged'
     
     # Initialize the parser
     gedcom_parser = Parser()
