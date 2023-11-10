@@ -5,32 +5,53 @@ import ttkbootstrap as tb
 import tkintermapview
 from helpers import open_file, filter_individuals, get_location
 
+# Global variable to store the existing markers
+existing_markers = []
+
 def open_selected_file():
     global individuals_data
     individuals_data = open_file()  # Load data from the selected file
     
     if individuals_data:
-        add_markers(map_widget, individuals_data)  # Display markers
+        # Clear existing markers before adding new ones
+        clear_markers()
+
+        # By default, show all ancesters living now (current year)
+        marker_current_year = filter_individuals(datetime.now().year, individuals_data) 
+        add_markers(map_widget, marker_current_year)  # Display markers
 
 def add_markers(map_widget, individuals):
+    global existing_markers
     markers = get_location(individuals)
+    
+    # Clear existing markers before adding new ones
+    clear_markers()
     for marker in markers:
         location = tkintermapview.convert_address_to_coordinates(marker['location'])
         if location is not None:
             text = marker['text']
             lat, long = location  # Extract latitude and longitude from the tuple
             map_widget.set_marker(lat, long, text=text)
+            existing_markers.append((lat, long, text))  # Save marker information
         else:
             print(f"Failed to get location for marker: {marker}")
+
+def clear_markers():
+    global existing_markers
+    map_widget.delete_all_marker()
+    existing_markers = []
 
 # handles text box for year input
 def on_year_entry_change(event):
     try:
         year_value = int(year_entry.get())
+        global individuals_data, map_widget
         if year_value > datetime.now().year:
             print("Invalid year. Please enter a valid year.")
         else:
-            filter_individuals(year_value)
+            filtered_data, unmapped_data = filter_individuals(year_value, individuals_data)
+            clear_markers() # clear existing markers before adding new ones
+            add_markers(map_widget, filtered_data)
     except ValueError:
         print("Invalid year format. Please enter a valid year.")
 
