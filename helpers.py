@@ -11,8 +11,8 @@ from gedcom.parser import Parser
 
 
 def open_file():
-    file_path = filedialog.askopenfilename(filetypes=[("GEDCOM Files", "*.ged")]) # for GUI
-    # file_path = '.ged'
+    # file_path = filedialog.askopenfilename(filetypes=[("GEDCOM Files", "*.ged")]) # for GUI
+    file_path = 'Wilson_Gardner Family Tree.ged'
     
     # Initialize the parser
     gedcom_parser = Parser()
@@ -145,19 +145,18 @@ def filter_individuals(slider_year, individuals):
 #       **** Handle Cases for Individuals to be Filtered ****
 
         # Case 1: Lifespan is within the slider year (individual is alive or died after slider year)
-        if birth_year and death_year and (birth_year is not None and death_year is not None):
+        if birth_year is not None and death_year is not None and birth_year <= slider_year and death_year >= slider_year:
             
-            if birth_year <= slider_year and death_year >= slider_year:
+            # Check for most recent residential information
+            if most_recent_residence is not None:
+                person['residences'] = [most_recent_residence]
                 
-                # Check for most recent residential information
-                if most_recent_residence is not None:
-                    person['residences'] = [most_recent_residence]
-                    
-                # No residential info, use birth year and birth place instead
-                elif most_recent_residence is None and birth_year is not None:
-                    person['residences'] = [(birth_year, person['birth_place'])] 
-                
+            # No residential info, use birth year and birth place instead
+            elif most_recent_residence is None and birth_year is not None:
+                person['residences'] = [(birth_year, person['birth_place'])] 
+            
             filtered_individuals.append(person)
+
 
         # Case 2: Birth year is found but death year is not found
         elif birth_year is not None and death_year is None:
@@ -207,14 +206,14 @@ def filter_individuals(slider_year, individuals):
     return filtered_individuals, unmapped_individuals
 
 
-# ***** TEST *****  Filter individuals data from GEDCOM based on slider year
+# ***** TEST *****  Filter individuals data from GEDCOM based on entry year
 # start_time = time.time()
 # individuals = open_file()
 
 # # Replace value with desired slider year for testing
-# slider_year = 2015
+# entry_year = 2015
 
-# filtered_data, unmapped_data = filter_individuals(slider_year, individuals)
+# filtered_data, unmapped_data = filter_individuals(entry_year, individuals)
 
 # print(filtered_data)
 
@@ -251,11 +250,15 @@ def filter_individuals(slider_year, individuals):
 def get_location(filtered_individuals):
     markers = []
     for person in filtered_individuals:
-        # Get each individual's name
-        name = ' '.join(person['name'])  # Combine first and last name into one string
+        try:
+            name = ' '.join(person.get('name', ('', '')))  # Combine first and last name into one string
+        except Exception as e:
+            print(f"Error getting name: {e}")
+            print(f"Person data causing the issue: {person}")
+            continue  # Skip the current person if an error occurs
 
         # individual's residence location - text should be name
-        for residence in person['residences']:
+        for residence in person.get('residences', []):
             year, location = residence  # Unpack the residence tuple
             if year and location != "Place unknown":
                 markers.append({'location': location, 'text': name})
@@ -263,4 +266,30 @@ def get_location(filtered_individuals):
     return markers
 
 
+# ***** TEST *****  get location data from GEDCOM based on entry year
+# start_time = time.time()
+# individuals_data = open_file()
 
+# # Replace value with desired slider year for testing
+# entry_year = 2023
+
+# # Filter individuals based on the entry year
+# filtered_data, unmapped_data = filter_individuals(entry_year, individuals_data)
+
+# # Get location markers
+# markers = get_location(filtered_data)
+# count = 0
+# # Print the result
+# print("Markers:")
+# for marker in markers:
+#     print()
+#     print(f"Location: {marker['location']}")
+#     print(f"Text: {marker['text']}")
+#     print()
+#     print("-----------------------")
+#     count += 1
+
+# print(f"Filtered Count: {count} people")
+# end_time = time.time()
+# execution_time = end_time - start_time
+# print(f"Execution time: {execution_time} seconds")
