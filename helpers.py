@@ -12,7 +12,7 @@ from gedcom.parser import Parser
 
 def open_file():
     # file_path = filedialog.askopenfilename(filetypes=[("GEDCOM Files", "*.ged")]) # for GUI
-    file_path = 'Wilson_Gardner Family Tree.ged'
+    file_path = '.ged'
     
     # Initialize the parser
     gedcom_parser = Parser()
