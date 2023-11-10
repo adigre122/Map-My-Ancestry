@@ -23,9 +23,16 @@ def add_markers(map_widget, individuals):
         else:
             print(f"Failed to get location for marker: {marker}")
 
-# handles slider_year
-def on_slider_change(value):
-    filter_individuals(value) 
+# handles text box for year input
+def on_year_entry_change(event):
+    try:
+        year_value = int(year_entry.get())
+        if year_value > datetime.now().year:
+            print("Invalid year. Please enter a valid year.")
+        else:
+            filter_individuals(year_value)
+    except ValueError:
+        print("Invalid year format. Please enter a valid year.")
 
 root = tb.Window(themename="superhero")
 root.title("Map My Ancestry Visualizer")
@@ -43,9 +50,14 @@ file_menu.add_command(label="Exit", command=root.quit)
 menu_bar.add_cascade(label="File", menu=file_menu)
 root.config(menu=menu_bar)
 
-# Create a slider for filtering data
-slider = tkinter.Scale(root, from_=1300, to=datetime.now().year, orient='horizontal', command=on_slider_change)
-slider.pack()
+# Create entry widget for year input
+year_entry = tb.Entry(root)
+year_entry.pack()
+
+# Function to validate the input (allow only digits)
+validate_cmd = root.register(lambda s: s.isdigit())
+year_entry.config(validate="key", validatecommand=(validate_cmd, "%S"))
+year_entry.bind("<Return>", on_year_entry_change)
 
 # create map widget
 map_widget = tkintermapview.TkinterMapView(root, width=400, height=400, corner_radius=0)
