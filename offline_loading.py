@@ -10,7 +10,6 @@ from PIL import Image, UnidentifiedImageError
 from utility_functions import decimal_to_osm, osm_to_decimal
 
 
-# Credit Tkintermapview: https://github.com/TomSchimansky/TkinterMapView/blob/main/tkintermapview/offine_loading.py
 
 class OfflineLoader:
     def __init__(self, path=None, tile_server=None, max_zoom=19):
@@ -25,12 +24,19 @@ class OfflineLoader:
             self.tile_server = tile_server
 
         self.max_zoom = max_zoom
-
         self.task_queue = []
         self.result_queue = []
         self.thread_pool = []
         self.lock = threading.Lock()
         self.number_of_threads = 50
+        self.stop_threads_flag = False  # Flag to signal threads to stop
+
+    def start_threads(self):
+        for thread in self.thread_pool:
+            thread.start()
+
+    def stop_threads(self):
+        self.stop_threads_flag = True
 
     def print_loaded_sections(self):
         # connect to database
@@ -49,12 +55,14 @@ class OfflineLoader:
         db_connection = sqlite3.connect(self.db_path, timeout=10)
         db_cursor = db_connection.cursor()
 
-        while True:
+        while not self.stop_threads:  # Check the stop_threads flag
             self.lock.acquire()
             if len(self.task_queue) > 0:
                 task = self.task_queue.pop()
                 self.lock.release()
                 zoom, x, y = task[0], task[1], task[2]
+
+                print(f"Downloading tile: Zoom={zoom}, X={x}, Y={y}")
 
                 check_existence_cmd = f"""SELECT t.zoom, t.x, t.y FROM tiles t WHERE t.zoom=? AND t.x=? AND t.y=? AND server=?;"""
                 try:
@@ -67,7 +75,6 @@ class OfflineLoader:
 
                 result = db_cursor.fetchall()
                 if len(result) == 0:
-
                     try:
                         url = self.tile_server.replace("{x}", str(x)).replace("{y}", str(y)).replace("{z}", str(zoom))
                         image_data = requests.get(url, stream=True, headers={"User-Agent": "TkinterMapView"}).content
@@ -135,11 +142,11 @@ class OfflineLoader:
         db_cursor.execute(create_sections_table)
         db_connection.commit()
 
-        # check if section is already in database
+        # check if section is already in the database
         db_cursor.execute("SELECT * FROM sections s WHERE s.position_a=? AND s.position_b=? AND s.zoom_a=? AND zoom_b=? AND server=?;",
-                          (str(position_b), str(position_b), zoom_a, zoom_b, self.tile_server))
+                          (str(position_a), str(position_b), zoom_a, zoom_b, self.tile_server))
         if len(db_cursor.fetchall()) != 0:
-            print("[save_offline_tiles] section is already in database", end="\n\n")
+            print("[save_offline_tiles] section is already in the database", end="\n\n")
             db_connection.close()
             return
 
@@ -155,8 +162,7 @@ class OfflineLoader:
             self.thread_pool.append(thread)
 
         # start threads
-        for thread in self.thread_pool:
-            thread.start()
+        self.start_threads()
 
         # loop through all zoom levels
         for zoom in range(round(zoom_a), round(zoom_b + 1)):
@@ -207,4 +213,5 @@ class OfflineLoader:
         db_connection.commit()
 
         db_connection.close()
+        self.stop_threads()  # Ensure threads are stopped when download is complete
         return

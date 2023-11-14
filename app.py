@@ -4,9 +4,18 @@ import tkinter
 import ttkbootstrap as tb
 import tkintermapview
 from helpers import open_file, filter_individuals, get_location
+from offline_loading import OfflineLoader
 
 # Global variable to store the existing markers
 existing_markers = []
+
+# Create an instance of CustomOfflineLoader
+db = "tiles.db"
+tile_server = "https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga"
+offline_loader = OfflineLoader(db, tile_server)
+
+# Load world tiles into the database (you might want to call this method only once)
+offline_loader.save_offline_tiles(position_a=(-85.05112878, -180), position_b=(85.05112878, 180), zoom_a=0, zoom_b=15)
 
 def open_selected_file():
     global individuals_data
@@ -88,11 +97,8 @@ year_entry.config(validate="key", validatecommand=(validate_cmd, "%S"))
 year_entry.bind("<Return>", on_year_entry_change)
 
 # create map widget
-map_widget = tkintermapview.TkinterMapView(root, width=400, height=400, corner_radius=0)
+map_widget = tkintermapview.TkinterMapView(root, width=400, height=400, corner_radius=0, use_database_only=True, database_path=db)
 map_widget.pack(fill="both", expand=True)
-
-# Set map to Google Satellite view
-map_widget.set_tile_server("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png", max_zoom=22) 
 
 # set current widget position and zoom
 map_widget.set_address("Earth")
