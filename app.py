@@ -12,7 +12,7 @@ existing_markers = []
 # Create an instance of CustomOfflineLoader
 db = "tiles.db"
 tile_server = "https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga"
-offline_loader = OfflineLoader(db, tile_server)
+offline_loader = OfflineLoader(db, tile_server, max_zoom=19)
 
 # Load world tiles into the database (you might want to call this method only once)
 offline_loader.save_offline_tiles(position_a=(-85.05112878, -180), position_b=(85.05112878, 180), zoom_a=0, zoom_b=15)
