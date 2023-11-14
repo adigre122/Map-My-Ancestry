@@ -63,8 +63,11 @@ root = tb.Window(themename="superhero")
 root.title("Map My Ancestry Visualizer")
 root.geometry(f"{800}x{600}")
 
-label = tb.Label(text="Map My Ancestry", font=("Helvetica", 28), bootstyle="default")
-label.pack(pady=50)
+label = tb.Label(text="Map My Ancestry", font=("Helvetica", 28), bootstyle="default", justify='center')
+label.pack(pady=10)
+
+instr = tb.Label(text="To see all people in your family tree at a given year, open a gedcom file in File. Then type a year into the box and hit enter.", font=("Helvetica", 12), bootstyle="secondary", wraplength=300, justify='center')
+instr.pack(pady=10)
 
 # Create a menu bar
 menu_bar = tb.Menu(root)
@@ -76,8 +79,8 @@ menu_bar.add_cascade(label="File", menu=file_menu)
 root.config(menu=menu_bar)
 
 # Create entry widget for year input
-year_entry = tb.Entry(root)
-year_entry.pack()
+year_entry = tb.Entry(root, bootstyle="primary")
+year_entry.pack(pady=15)
 
 # Function to validate the input (allow only digits)
 validate_cmd = root.register(lambda s: s.isdigit())
