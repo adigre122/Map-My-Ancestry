@@ -5,6 +5,7 @@ import threading
 import requests
 import sys
 import math
+from concurrent.futures import ThreadPoolExecutor
 from PIL import Image, UnidentifiedImageError
 
 from utility_functions import decimal_to_osm, osm_to_decimal
@@ -26,15 +27,24 @@ class OfflineLoader:
         self.result_queue = []
         self.thread_pool = []
         self.lock = threading.Lock()
-        self.number_of_threads = 50
-        self.stop_threads_flag = False  # Flag to signal threads to stop
+        self.number_of_threads = 30
+
+    def tile_exists(self, zoom, x, y):
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM tiles WHERE zoom=? AND x=? AND y=?", (zoom, x, y))
+            count = cursor.fetchone()[0]
+            return count > 0
+
 
     def start_threads(self):
         for thread in self.thread_pool:
+            print(f"[Main] Starting thread: {thread.name}")
             thread.start()
 
     def stop_threads(self):
-        self.stop_threads_flag = True
+        for thread in self.thread_pool:
+            thread.join()
 
     def print_loaded_sections(self):
         # connect to database
@@ -49,64 +59,58 @@ class OfflineLoader:
 
         print("", end="\n\n")
 
-    def save_offline_tiles_thread(self):
-        db_connection = sqlite3.connect(self.db_path, timeout=10)
+    def save_offline_tiles_thread(self, stop_event):
+        db_connection = sqlite3.connect(self.db_path)
         db_cursor = db_connection.cursor()
 
-        while not self.stop_threads_flag:  # Check the stop_threads_flag attribute
+        while not stop_event.is_set():  # Check the stop_threads_flag attribute
 
             self.lock.acquire()
             if len(self.task_queue) > 0:
+                print("[Thread] Task queue before processing:", self.task_queue)
                 task = self.task_queue.pop()
+                print("[Thread] Task queue after processing:", self.task_queue)
                 self.lock.release()
                 zoom, x, y = task[0], task[1], task[2]
 
                 print(f"[Thread] Downloading tile: Zoom={zoom}, X={x}, Y={y}")
 
-                check_existence_cmd = f"""SELECT t.zoom, t.x, t.y FROM tiles t WHERE t.zoom=? AND t.x=? AND t.y=? AND server=?;"""
+                check_existence_cmd = """SELECT 1 FROM tiles t WHERE t.zoom=? AND t.x=? AND t.y=? AND server=? LIMIT 1;"""
                 try:
-                    db_cursor.execute(check_existence_cmd, (zoom, x, y, self.tile_server))
-                except sqlite3.OperationalError as oe:
-                    print(f"[Thread] SQLite Operational Error: {oe}")
+                    url = self.tile_server.replace("{x}", str(x)).replace("{y}", str(y)).replace("{z}", str(zoom))
+                    print(f"[Thread] Downloading tile: Zoom={zoom}, X={x}, Y={y}, URL={url}")
+
+                    image_data = requests.get(url, stream=True, headers={"User-Agent": "TkinterMapView"}).content
+                    print(f"[Thread] Tile downloaded successfully: Zoom={zoom}, X={x}, Y={y}")
+
+                    self.lock.acquire()
+
+                    # Check if the record already exists
+                    existing_record = db_cursor.execute(check_existence_cmd, (zoom, x, y, self.tile_server)).fetchone()
+                    if existing_record is None:
+                        self.result_queue.append((zoom, x, y, self.tile_server, image_data))
+                        insert_tile_cmd = """INSERT INTO tiles (zoom, x, y, server, tile_image) VALUES (?, ?, ?, ?, ?);"""
+                        
+                        print(f"[Thread] Inserting tile into database: Zoom={zoom}, X={x}, Y={y}")
+                        
+                        db_cursor.execute(insert_tile_cmd, (zoom, x, y, self.tile_server, image_data))
+                        db_connection.commit()
+                        print(f"[Thread] Tile inserted into database: Zoom={zoom}, X={x}, Y={y}")
+                    
+                    self.lock.release()
+
+                except (sqlite3.OperationalError, UnidentifiedImageError) as e:
+                    print(f"[Thread] Error: {e}")
                     self.lock.acquire()
                     self.task_queue.append(task)
                     self.lock.release()
-                    continue
 
-                result = db_cursor.fetchall()
-                if len(result) == 0:
-                    try:
-                        url = self.tile_server.replace("{x}", str(x)).replace("{y}", str(y)).replace("{z}", str(zoom))
-                        image_data = requests.get(url, stream=True, headers={"User-Agent": "TkinterMapView"}).content
-
-                        print(f"[Thread] Tile downloaded successfully: Zoom={zoom}, X={x}, Y={y}")
-
-                        self.lock.acquire()
-                        self.result_queue.append((zoom, x, y, self.tile_server, image_data))
-                        self.lock.release()
-
-                    except sqlite3.OperationalError as oe:
-                        print(f"[Thread] SQLite Operational Error: {oe}")
-                        self.lock.acquire()
-                        self.task_queue.append(task)  # re-append task to task_queue
-                        self.lock.release()
-
-                    except UnidentifiedImageError:
-                        print(f"[Thread] UnidentifiedImageError for tile: Zoom={zoom}, X={x}, Y={y}")
-                        self.lock.acquire()
-                        self.result_queue.append((zoom, x, y, self.tile_server, None))
-                        self.lock.release()
-
-                    except Exception as err:
-                        print(f"[Thread] Error downloading tile: Zoom={zoom}, X={x}, Y={y}, Error: {str(err)}")
-                        self.lock.acquire()
-                        self.task_queue.append(task)
-                        self.lock.release()
-                else:
-                    print(f"[Thread] Tile already exists in the database: Zoom={zoom}, X={x}, Y={y}")
+                except Exception as e:
+                    print(f"[Thread] Error downloading tile: Zoom={zoom}, X={x}, Y={y}, Error: {str(e)}")
                     self.lock.acquire()
-                    self.result_queue.append((zoom, x, y, self.tile_server, None))
+                    self.task_queue.append(task)
                     self.lock.release()
+
             else:
                 self.lock.release()
 
@@ -162,9 +166,10 @@ class OfflineLoader:
             db_cursor.execute(f"INSERT INTO server (url, max_zoom) VALUES (?, ?);", (self.tile_server, self.max_zoom))
             db_connection.commit()
 
-        # create threads
+        # create threads with an event to signal stopping
+        stop_event = threading.Event()
         for i in range(self.number_of_threads):
-            thread = threading.Thread(daemon=True, target=self.save_offline_tiles_thread, args=())
+            thread = threading.Thread(daemon=True, target=self.save_offline_tiles_thread, args=(stop_event,))
             self.thread_pool.append(thread)
 
         # start threads
@@ -176,19 +181,22 @@ class OfflineLoader:
             lower_right_tile_pos = decimal_to_osm(*position_b, zoom)
 
             self.lock.acquire()
-            for x in range(math.floor(upper_left_tile_pos[0]), math.ceil(lower_right_tile_pos[0]) + 1):
-                for y in range(math.floor(upper_left_tile_pos[1]), math.ceil(lower_right_tile_pos[1]) + 1):
+            number_of_tasks = 0  # Move the task count calculation after acquiring the lock
+            for x in range(2 ** zoom):
+                for y in range(2 ** zoom):
                     self.task_queue.append((zoom, x, y))
-            number_of_tasks = len(self.task_queue)
+                    number_of_tasks += 1
             self.lock.release()
 
             print(f"[save_offline_tiles] zoom: {zoom:<2}  tiles: {number_of_tasks:<8}  storage: {math.ceil(number_of_tasks * 8 / 1024):>6} MB", end="")
             print(f"  progress: ", end="")
 
+            # check the task queue after it's populated
+            print(f"[save_offline_tiles] Task queue after populating: {self.task_queue}")
+
             result_counter = 0
             loading_bar_length = 0
-            while result_counter < number_of_tasks:
-
+            while result_counter < number_of_tasks or len(self.task_queue) > 0:
                 self.lock.acquire()
                 if len(self.result_queue) > 0:
                     loading_result = self.result_queue.pop()
@@ -202,24 +210,24 @@ class OfflineLoader:
                 else:
                     self.lock.release()
 
-                # update loading bar to current progress (percent)
+                # Update loading bar to current progress (percent)
                 percent = result_counter / number_of_tasks
                 length = round(percent * 30)
                 while length > loading_bar_length:
                     print("█", end="")
                     loading_bar_length += 1
 
-            print(f" {result_counter:>8} tiles loaded")
+            print(f" {result_counter} tiles loaded")
 
         print("", end="\n\n")
 
-        # insert loading section in the database
+        # Wait for all threads to finish before closing the database connection
+        self.stop_threads()  # Stop threads after download is complete
+        stop_event.set()  # Set the stop event to signal threads to stop
         db_cursor.execute(f"INSERT INTO sections (position_a, position_b, zoom_a, zoom_b, server) VALUES (?, ?, ?, ?, ?);",
-                          (str(position_a), str(position_b), zoom_a, zoom_b, self.tile_server))
+                        (str(position_a), str(position_b), zoom_a, zoom_b, self.tile_server))
         db_connection.commit()
-
         db_connection.close()
-        self.stop_threads()  # Ensure threads are stopped when download is complete
         return
 
 # # Example Usage
