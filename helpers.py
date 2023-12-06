@@ -68,21 +68,6 @@ def open_file():
 
     return individuals
 
-
-# ***** TEST *****  Load individuals data from GEDCOM
-# start_time = time.time()
-# individuals, locations_by_year = open_file()
-
-# for i in individuals:
-#     print(i)
-
-# for i, loc, in locations_by_year.items():
-#     print(f"Individual: {i}, Locations: {loc}")
-# end_time = time.time()
-# execution_time = end_time - start_time
-# print(f"Execution time: {execution_time} seconds")
-
-
 def get_year(date):
 
     # extract years
@@ -103,14 +88,6 @@ def get_year(date):
 
     return None # Return 0 if the date format is not recognized - individual with year 0 will be filtered out as they will be considered deceased
 
-# ***** TEST *****  Year parsing
-# print(get_year("31 Dec 2000"))  # Should print: 2000
-# print(get_year("1 Apr 1935"))  # Should print: 1935
-# print(get_year("Feb 1998"))   # Should print: 1998
-# print(get_year("1945"))       # Should print: 1945
-# print(get_year("Some Invalid Date"))  # Should print: 0
-
-
 def filter_individuals(slider_year, individuals):
     filtered_individuals = []
     unmapped_individuals = []
@@ -120,8 +97,6 @@ def filter_individuals(slider_year, individuals):
         birth_year = get_year(person['birth_date'])
         death_year = get_year(person['death_date']) if person['death_date'] != "Date unknown" else None
         residences = person['residences']
-
-        # print(f"Processing: {person['name']}, Birth Year: {birth_year}, Death Year: {death_year}")
 
         # Remove residences that are None
         residences = [residence for residence in residences if residence[1] != "Place unknown"]
@@ -166,56 +141,11 @@ def filter_individuals(slider_year, individuals):
             if most_recent_residence[0] + threshold_age < slider_year:
                 continue
 
-
-
-
 #       **** Handle Individuals to be Filtered ****
         if birth_year is not None and birth_year <= slider_year:
             filtered_individuals.append(person)
                 
     return filtered_individuals, unmapped_individuals
-
-
-# ***** TEST *****  Filter individuals data from GEDCOM based on entry year
-# start_time = time.time()
-# individuals = open_file()
-
-# # Replace value with desired slider year for testing
-# entry_year = 2000
-
-# filtered_data, unmapped_data = filter_individuals(entry_year, individuals)
-
-# print(filtered_data)
-
-# # Write filtered data to a file
-# with open('filtered_data.txt', 'w') as file:
-#     file.write("### Filtered Individuals ###\n")
-#     for person in filtered_data:
-#         file.write(f"Name: {person['name']}\n")
-#         file.write(f"Birth Date: {person['birth_date']}\n")
-#         file.write(f"Death Date: {person['death_date']}\n")
-#         file.write("Residences:\n")
-#         for residence in person['residences']:
-#             file.write(f"   Year: {residence[0]}\n")
-#             file.write(f"   Location: {residence[1]}\n")
-#         file.write("-----------------------\n")
-
-#     file.write("### Unmapped Individuals ###\n")
-#     for person in unmapped_data:
-#         file.write(f"Name: {person['name']}\n")
-#         file.write(f"Birth Date: {person['birth_date']}\n")
-#         file.write(f"Death Date: {person['death_date']}\n")
-#         file.write("Residences:\n")
-#         for residence in person['residences']:
-#             file.write(f"   Year: {residence[0]}\n")
-#             file.write(f"   Location: {residence[1]}\n")
-#         file.write("-----------------------\n")
-
-# end_time = time.time()
-# execution_time = end_time - start_time
-# print(f"Execution time: {execution_time} seconds")
-
-
 
 def get_location(filtered_individuals):
     markers = []
@@ -231,36 +161,3 @@ def get_location(filtered_individuals):
                     markers.append({'location': location, 'year': year, 'text': name})
 
     return markers
-
-
-
-
-
-# ***** TEST *****  get location data from GEDCOM based on entry year
-# start_time = time.time()
-# individuals_data = open_file()
-
-# # Replace value with desired slider year for testing
-# entry_year = 2002
-
-# # Filter individuals based on the entry year
-# filtered_data, unmapped_data = filter_individuals(entry_year, individuals_data)
-
-# # Get location markers
-# markers = get_location(filtered_data)
-# count = 0
-# # Print the result
-# print("Markers:")
-# for marker in markers:
-#     print()
-#     print(f"Location: {marker['location']}")
-#     print(f"Location Year: {marker['year']}")
-#     print(f"Text: {marker['text']}")
-#     print()
-#     print("-----------------------")
-#     count += 1
-
-# print(f"Filtered Count: {count} people")
-# end_time = time.time()
-# execution_time = end_time - start_time
-# print(f"Execution time: {execution_time} seconds")
