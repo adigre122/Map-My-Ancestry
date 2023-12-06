@@ -58,5 +58,6 @@ This license allows others to remix, tweak, and build upon your work non-commerc
 ## Acknowledgments
 
 - [Harvard's CS50](https://cs50.harvard.edu/x/2023/)
+- [GEDCOM Parser](https://gedcom.nickreynke.dev/gedcom/index.html)
 - [ttkbootstrap](https://github.com/TkinterTtk/ttkbootstrap)
 - [tkintermapview](https://github.com/czq142857/tkintermapview)
