@@ -40,7 +40,7 @@
 
 - **Location Considerations**: The application considers the years individuals lived to determine if they were living during the user's input year. If so, the Map My Ancestry will consider the ancestors' residential timeline information and birthplace.
 
-- **Important Things to Consider**: This application will resort to plotting markers of the birthplace of the ancestors if no residential information can be found. 
+- **Important Things to Consider**: This application will resort to plotting markers of the birthplace of the ancestors if no residential information can be found. Make sure you have a stable internet connection in order to properly use Map My Ancestry.
 
 ## Future Versions
 
