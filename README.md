@@ -49,6 +49,22 @@ Potential enhancements in future releases:
 - Offline loading of the map tiles
 - Buttons to change the map styling
 
+## app.py
+
+**app.py** is the main Python file that establishes the GUI for Map My Ancestry as well as the necessary functions for buttons and crucial features such as uploading a file and parsing it. I decided to keep this file clean and minimal to keep everything organized and easy to read.
+
+## helpers.py
+
+**helpers.py** is the meat and potatoes of this project. I wanted the main functionality to be in a separate file so that everything is organized and easier to debug and read. This was a crucial design choice that I knew would need to be necessary as the logic of parsing was more complicated than I expected it to be. This is because there were a lot of test cases I needed to consider to properly parse the data and only display the correct individuals on the map.
+
+## requirements.txt
+
+**requirements.txt** is a list of all dependencies needed for Map My Ancestry to run properly. Please look at step 2 in the installation process to see how to make sure you have all the dependencies for this project.
+
+## SAMPLE.ged
+
+**SAMPLE.ged** is a sample file I used in the demo to show how the filtering works live. You may look at this file and see how a simple GEDCOM file is structured. During the development stages, I also used my own personal GEDCOM file which is much larger with many different "tags" to ensure that the filtering logic still works and Map My Ancestry can process hundreds and thousands of individuals.
+
 ## License
 
 This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/).
