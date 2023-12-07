@@ -89,8 +89,8 @@ year_entry.bind("<Return>", on_year_entry_change)
 map_widget = tkintermapview.TkinterMapView(root, width=400, height=400, corner_radius=0)
 map_widget.pack(fill="both", expand=True)
 
-# Set map to Google Satellite view
-map_widget.set_tile_server("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png", max_zoom=22) 
+# Set map to Google map view
+map_widget.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22) 
 
 # set current widget position and zoom
 map_widget.set_address("Earth")
