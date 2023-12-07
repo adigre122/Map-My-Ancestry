@@ -2,7 +2,7 @@
 
 #### Video Demo:  Check out a [demo](https://www.youtube.com/watch?v=sEhbF_0cxUU) to see Map My Ancestry in action.
 
-#### Map My Ancestry is a simple Python application that allows you to visualize the locations of your ancestors on a map based on the information provided by a GEDCOM file and an input year. This application utilizes the 'tkintermapview' library for the map view and 'ttkbootstrap' for styling.
+#### Map My Ancestry is a simple Python application that allows you to visualize the locations of your ancestors on a map based on the information provided by a GEDCOM file and an input year. This application utilizes the **tkintermapview** library for the map view, **ttkbootstrap** for styling, and **python-gedcom** for GEDCOM parsing.
 
 ## Installation
 
