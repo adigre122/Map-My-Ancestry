@@ -8,8 +8,6 @@ from gedcom.element.individual import IndividualElement
 from gedcom.parser import Parser
 
 
-
-
 def open_file():
     file_path = filedialog.askopenfilename(filetypes=[("GEDCOM Files", "*.ged")]) # for GUI
     # file_path = 'SAMPLE.ged'
@@ -98,6 +96,8 @@ def filter_individuals(slider_year, individuals):
         death_year = get_year(person['death_date']) if person['death_date'] != "Date unknown" else None
         residences = person['residences']
 
+        # print(f"Processing: {person['name']}, Birth Year: {birth_year}, Death Year: {death_year}")
+
         # Remove residences that are None
         residences = [residence for residence in residences if residence[1] != "Place unknown"]
 
@@ -113,7 +113,6 @@ def filter_individuals(slider_year, individuals):
             else:
                 person['residences'] = [(None, 'No residence found')]
 
-        
         # Filter out if all information is unknown or missing
         if birth_year is None and death_year is None and most_recent_residence is None:
             unmapped_individuals.append(person)
